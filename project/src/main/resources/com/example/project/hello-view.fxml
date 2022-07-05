@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="node" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.MainController">
+   <children>
+      <ScrollPane layoutX="14.0" layoutY="51.0" prefHeight="534.0" prefWidth="359.0">
+         <content>
+            <Canvas height="543.0" width="365.0" />
+         </content>
+      </ScrollPane>
+      <AnchorPane layoutX="743.0" layoutY="51.0" prefHeight="45.0" prefWidth="136.0" style="-fx-background-color: #808080;">
+         <children>
+            <Button fx:id="save_file_button" layoutX="8.0" layoutY="48.0" mnemonicParsing="false" onAction="#save_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Сохранить файл">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="open_file_button" layoutX="8.0" layoutY="8.0" mnemonicParsing="false" onAction="#open_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Открыть Файл" AnchorPane.bottomAnchor="50.0" AnchorPane.topAnchor="8.0">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <Button fx:id="clear_scene_button" layoutX="743.0" layoutY="170.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="136.0" style="-fx-background-color: #ffa000;" text="Очистить холст">
+         <font>
+            <Font name="Impact" size="12.0" />
+         </font>
+      </Button>
+      <AnchorPane layoutX="438.0" layoutY="51.0" prefHeight="85.0" prefWidth="274.0" style="-fx-background-color: #808080;">
+         <children>
+            <Button fx:id="add_vert_button" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#add_vert" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить вершину">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="del_vert_button" layoutX="144.0" layoutY="14.0" mnemonicParsing="false" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить вершину">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="add_edge_button" layoutX="14.0" layoutY="49.0" mnemonicParsing="false" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить ребро">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+            <Button fx:id="del_edge_button" layoutX="144.0" layoutY="49.0" mnemonicParsing="false" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить ребро">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="438.0" layoutY="153.0" prefHeight="58.0" prefWidth="274.0" style="-fx-background-color: #808080;">
+         <children>
+            <Button fx:id="result_button" layoutX="14.0" layoutY="16.0" mnemonicParsing="false" onAction="#result" prefHeight="24.0" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Результат">
+               <font>
+                  <Font name="Impact" size="13.0" />
+               </font>
+            </Button>
+            <Button fx:id="step_forward_button" layoutX="145.0" layoutY="16.0" mnemonicParsing="false" prefHeight="25.6" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Шаг вперёд">
+               <font>
+                  <Font name="Impact" size="12.0" />
+               </font>
+            </Button>
+         </children>
+      </AnchorPane>
+      <TextArea fx:id="my_console" editable="false" layoutX="438.0" layoutY="339.0" prefHeight="246.0" prefWidth="457.0" />
+   </children>
+</AnchorPane>

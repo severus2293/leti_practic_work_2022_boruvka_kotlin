@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="node" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.MainController">
+<AnchorPane fx:id="node" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.refactor_vizualize_graph_ktln.HelloController">
    <children>
       <AnchorPane layoutX="743.0" layoutY="51.0" prefHeight="82.0" prefWidth="155.0" style="-fx-background-color: #808080;" AnchorPane.leftAnchor="743.0" AnchorPane.rightAnchor="2.0">
          <children>

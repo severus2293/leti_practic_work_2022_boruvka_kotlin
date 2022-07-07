@@ -5,11 +5,11 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="node" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.MainController">
+<AnchorPane fx:id="uif" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.MainController">
    <children>
+      <ScrollPane fx:id="scroll_pane" layoutX="14.0" layoutY="51.0" prefHeight="534.0" prefWidth="359.0" />
       <AnchorPane layoutX="743.0" layoutY="51.0" prefHeight="82.0" prefWidth="155.0" style="-fx-background-color: #808080;" AnchorPane.leftAnchor="743.0" AnchorPane.rightAnchor="2.0">
          <children>
             <Button fx:id="save_file_button" layoutX="8.0" layoutY="48.0" mnemonicParsing="false" onAction="#save_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Сохранить файл" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="6.0">
@@ -68,10 +68,6 @@
          </children>
       </AnchorPane>
       <TextArea fx:id="my_console" editable="false" layoutX="438.0" layoutY="339.0" prefHeight="217.0" prefWidth="409.0" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="432.4" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="339.0" />
-      <ScrollPane fx:id="scroll_pane" layoutX="26.0" layoutY="58.0" prefHeight="479.0" prefWidth="343.0">
-         <content>
-            <Pane fx:id="holst" prefHeight="483.0" prefWidth="346.0" />
-         </content></ScrollPane>
    </children>
    <padding>
       <Insets bottom="14.599999999999994" right="21.0" />

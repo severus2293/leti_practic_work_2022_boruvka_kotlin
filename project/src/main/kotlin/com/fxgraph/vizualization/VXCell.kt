@@ -4,19 +4,21 @@ import com.fxgraph.graph.Cell
 import javafx.event.EventHandler
 import javafx.geometry.Point2D
 import javafx.scene.Cursor
-import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.text.Text
 
 class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,30.0) {
-
+    private var name: Text = Text(cellId)
+    var edgesmap: MutableMap<VXCell,VXEdge> = hashMapOf()
+    var weightmap: MutableMap<VXCell,Int> = hashMapOf()
+    var neighbors: MutableList<VXCell> = mutableListOf()
    var cell: Cell = Cell(cellId)
    var isDragging: Boolean = false
  //  var view: Circle = Circle(x,y,30.0)
-   var name: Text = Text(cellId)
+   //var name: Text = Text(cellId)
    init{
 
       stroke = Color.GREEN
@@ -26,7 +28,9 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,30.0) {
     fun getcellId(): String{
         return cellId
     }
-
+    fun get_lable(): Text{
+        return name
+    }
    /**
     * Gets position of the center of this vertex view
     *
@@ -35,7 +39,17 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,30.0) {
    fun getPosition(): Point2D? {
       return Point2D(centerX, centerY)
    }
+   fun remove_connection(){
+       for(neighbr in neighbors){
+           val cur = this.weightmap[neighbr]
+           neighbr.edgesmap.remove(this)
+         //  neighbr.edges.remove(cur?.let { VXEdge(this,neighbr, it) })
+          // neighbr.edges.remove(cur?.let { VXEdge(neighbr,this, it) })
+           neighbr.neighbors.remove(this)
+           this.weightmap.remove(neighbr)
+       }
 
+   }
    fun setPosition(x: Double, y: Double) {
       if (isDragging) {
          return
@@ -104,6 +118,14 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,30.0) {
       onMouseEntered = EventHandler { event: MouseEvent? -> }
       onMouseExited = EventHandler { event: MouseEvent? -> }
    }
+
+    fun setLabel(label: Text) {
+        name = label
+        name.xProperty().bind(centerXProperty().add(radiusProperty()))
+        //name.xProperty().bind(centerXProperty().subtract(label.layoutBounds.width / 2.0))
+        //name.yProperty().bind(centerYProperty().add(radius + label.layoutBounds.height))
+        name.yProperty().bind(centerYProperty().add(radiusProperty()))
+    }
 
    /**
     * Sets value to fit in boundaries: (min + radius; max - radius)

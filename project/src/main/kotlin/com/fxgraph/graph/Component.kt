@@ -1,5 +1,4 @@
 package com.fxgraph.graph
-
 import kotlin.math.min
 
 class Component {
@@ -13,13 +12,27 @@ class Component {
 
     fun checkComponentCell(name: String): Int {
         var num = 0
-        for (i in Cells){
+        for (i in Cells) {
             if (name == i.getcellId())
                 return num
             num++
         }
         return Cells.size
     }
+
+    fun printneigbors() {
+        var str1 = ""
+        var str2 = ""
+        for (i in edges.keys) {
+            str1 += i.getcellId() + " "
+        }
+        for (i in edges.values) {
+            str2 += "$i "
+        }
+        println("[$str1]\n[$str2]")
+
+    }
+
 
     fun removeEdge(temp: Component){
         for (i in temp.Cells)
@@ -31,20 +44,20 @@ class Component {
 
     fun setCells(temp: MutableList<Cell>) {Cells = temp}
     fun setEdges(temp: MutableList<Edge>) {allEdges = temp}
-    fun setAllEdges(temp: MutableMap<Cell, Int>) {edges = temp}
+    fun setAllEdges(temp: MutableMap<Cell, Int>) {edges.putAll(temp)}
 
-    fun printallCells(){
+    fun printallCells(): String {
+        var res: String = ""
         for (i in Cells){
-            print("${i.getcellId()} ")
+            res += i.getcellId()+" "
         }
-        println("")
+        return res.trim()
     }
 
     fun mergeComp(temp: Component){
-        print("to the connectivity component ")//-------
-        this.printallCells()//  Вывод компонент свзяности
-        print("is added")//
-        temp.printallCells()//-------
+        println("---Beginning of merging of components---")//-------
+        println("First component [${this.printallCells()}]")//  Вывод компонент свзяности
+        println("Second component [${temp.printallCells()}]")//------
         for (i in temp.Cells){
             this.Cells.add(i)
         }
@@ -55,8 +68,8 @@ class Component {
         var keys_1 = this.edges.keys
         var keys_2 = temp.edges.keys
 
-        println("The first component of connectivity contains the following edges ${this.getEdges().values}")
-        println("The second component of connectivity contains the following edges ${temp.getEdges().values}")
+        println("The first component of connectivity contains the following edges ${this.printneigbors()}")
+        println("The second component of connectivity contains the following edges ${temp.printneigbors()}")
 
         for (i in 0 until keys_2.size){
             if (keys_2.elementAt(i) in keys_1){
@@ -69,7 +82,7 @@ class Component {
             }
         }
 
-        println("List of edges after joining the connectivity components ${this.getEdges().values}")
+        println("List of edges after joining the connectivity components ${this.printneigbors()}")
 
     }
 

@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="dialog_edge" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="323.0" style="-fx-background-color: #808080;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.refactor_vizualize_graph_ktln.NewFolderController">
+<AnchorPane fx:id="dialog_edge" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="98.0" prefWidth="323.0" style="-fx-background-color: #808080;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.project.NewFolderController">
    <children>
       <Text layoutX="36.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Вес Ребра:" wrappingWidth="74.28985595703125" />
       <Button layoutX="112.0" layoutY="55.0" mnemonicParsing="false" onAction="#add_edge" prefHeight="26.0" prefWidth="184.0" style="-fx-background-color: #ffa000;" text="Подтвердить">

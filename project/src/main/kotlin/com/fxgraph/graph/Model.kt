@@ -54,6 +54,10 @@ class Model {
         cellMap[cell.getcellId()] = cell // присвоить пару ключ-значение
 
     }
+    fun del_edge(edge: Edge){
+        removedEdges.add(edge)
+        merge()
+    }
 
     fun addEdge( sourceId: String, targetId: String, weight : Int) { // добавить ребро
 
@@ -116,7 +120,20 @@ class Model {
         removedEdges.clear(); // очистить буфферы
 
     }
+    fun remove_cell(cell:Cell){
+        removedCells.add(cell)
+        merge()
+    }
 
+    fun clear_all(){
+        allCells.clear()// список всех вершин
+        addedCells.clear()  // добавленные вершины
+        removedCells.clear() // удалённые вершины
+        allEdges.clear() // список рёбер
+        addedEdges.clear()// список добавленных рёбер
+        removedEdges.clear() // список удалённых рёбер
+        cellMap.clear()  // <id,cell> доступ к вершине по имени
+    }
     fun BoruvkaMST(): MutableList<Edge>? {
         if (this.getAllEdges().isNotEmpty()){
             var T = mutableListOf<Component>()

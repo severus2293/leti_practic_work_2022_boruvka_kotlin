@@ -51,7 +51,7 @@ class HelloController {
 
  @FXML
  fun clear_holst() {
-   holst.children.removeAll(vxedges)
+  holst.children.removeAll(vxedges)
   holst.children.removeAll(vxcells)
   for(e in vxedges){
    holst.children.remove(e.get_label())
@@ -107,18 +107,18 @@ class HelloController {
  private fun del_vert(event: ActionEvent) {
   event.consume()
   if(del_vert_button.style == "-fx-background-color: green") { // если включена
-     del_vert_button.style = "-fx-background-color: #ffa000"
-     off_parametrs() // сброс всего
-     for(cell in vxcells){
-      cell.enableDrag()
-     }
+   del_vert_button.style = "-fx-background-color: #ffa000"
+   off_parametrs() // сброс всего
+   for(cell in vxcells){
+    cell.enableDrag()
+   }
   }
   else{
-    del_vert_button.style = "-fx-background-color: green"
-    for(cell in vxcells){
-       cell.onMousePressed = onMousePressed_del_vert
-    }
+   del_vert_button.style = "-fx-background-color: green"
+   for(cell in vxcells){
+    cell.onMousePressed = onMousePressed_del_vert
    }
+  }
  }
 
 
@@ -129,19 +129,19 @@ class HelloController {
   node.remove_connection()
   for(e in node.edgesmap.values){
 
-    holst.children.remove(e)
-    holst.children.remove(e.get_label())
+   holst.children.remove(e)
+   holst.children.remove(e.get_label())
   }
   vxcells.remove(node)
   holst.children.remove(node.get_lable())
   holst.children.remove(node)
  }
  private fun cleaning(cell: VXCell){
-   for(neighbor in cell.neighbors){
-    val cur = cell.weightmap[neighbor]
-    cur?.let { Edge(cell.cell,neighbor.cell, it) }?.let { model.del_edge(it) }
-    cur?.let { Edge(neighbor.cell,cell.cell, it) }?.let { model.del_edge(it) }
-   }
+  for(neighbor in cell.neighbors){
+   val cur = cell.weightmap[neighbor]
+   cur?.let { Edge(cell.cell,neighbor.cell, it) }?.let { model.del_edge(it) }
+   cur?.let { Edge(neighbor.cell,cell.cell, it) }?.let { model.del_edge(it) }
+  }
  }
  /////////////////////////////////////////////////////////////////////////////
  @FXML
@@ -155,11 +155,11 @@ class HelloController {
    }
   } else {
    add_edge_button.style = "-fx-background-color: green"
-  for(cell in vxcells){
-   cell.disableDrag()
-   cell.onMousePressed = onMousePressed_add_edge
+   for(cell in vxcells){
+    cell.disableDrag()
+    cell.onMousePressed = onMousePressed_add_edge
+   }
   }
- }
  }
  var onMousePressed_add_edge = EventHandler<MouseEvent> {event ->
   val node = event.source as VXCell
@@ -180,11 +180,11 @@ class HelloController {
     e.set_label(Text(weight.toString()))
     vxedges.add(e)
     edge[0].edgesmap[edge[1]] = e
-   // edge[0].edges.add(e)
+    // edge[0].edges.add(e)
     edge[0].neighbors.add(edge[1])
     edge[0].weightmap[edge[1]] = weight
     edge[1].edgesmap[edge[0]] = e
-   // edge[1].edges.add(e)
+    // edge[1].edges.add(e)
     edge[1].neighbors.add(edge[0])
     edge[1].weightmap[edge[0]] = weight
     holst.children.add(e.get_label())
@@ -222,7 +222,7 @@ class HelloController {
   if(edge.size == 2){
    println("del")
    if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
-     val cur: Int? = edge[0].weightmap[edge[1]]
+    val cur: Int? = edge[0].weightmap[edge[1]]
     val e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[0],edge[1], it) }
     val second_e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[1],edge[0], it) }
     edge[0].neighbors.remove(edge[1])
@@ -231,8 +231,8 @@ class HelloController {
     holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
     holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
     edge[0].edgesmap.remove(edge[1])
-   // edge[0].edges.remove(e)
-   // edge[0].edges.remove(second_e)
+    // edge[0].edges.remove(e)
+    // edge[0].edges.remove(second_e)
     edge[0].weightmap.remove(edge[1])
     edge[1].neighbors.remove(edge[0])
     edge[1].edgesmap.remove(edge[0])
@@ -250,7 +250,7 @@ class HelloController {
 
  @FXML
  private fun result() {
-    model.BoruvkaMST()
+  model.BoruvkaMST()
  }
  @FXML
  private fun step_forward() {

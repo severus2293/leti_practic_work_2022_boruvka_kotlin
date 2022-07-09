@@ -1,4 +1,5 @@
 package com.fxgraph.graph
+
 import kotlin.math.min
 
 class Component {
@@ -85,7 +86,5 @@ class Component {
         println("List of edges after joining the connectivity components ${this.printneigbors()}")
 
     }
-
-
 
 }

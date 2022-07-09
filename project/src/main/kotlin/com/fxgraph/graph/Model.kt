@@ -148,13 +148,13 @@ class Model {
 
             while (T.size > 1){
                 var p = T[n]
-                print("Cells in current connectivity component ")
-                p.printallCells()
+                println("Cells in current connectivity component [${p.printallCells()}]")
                 var destination = Cell()
                 var num: Int = 0
+                print("---Find minimal edge from current connectivity component---")
                 for (i in p.getEdges()){
-                    println("Current cell: ${i.key.getcellId()} \n edge in question: ${i.value}")
-                    println("Current minimal edge: $num \n The current cell to which the edge is directed: ${destination.getcellId()} \n")
+                    println("Current cell: ${i.key.getcellId()} \nedge in question: ${i.value}")
+                    println("Current minimal edge: $num \nThe current cell to which the edge is directed: ${destination.getcellId()} \n")
                     if (destination.getcellId().isEmpty()){
                         destination = i.key
                         num = i.value
@@ -163,13 +163,12 @@ class Model {
                         destination = i.key
                     }
                 }
-                println("Cell found: ${destination.getcellId()}\n Edge found: $num \n")
+                println("Cell found: ${destination.getcellId()}\nEdge found: $num\n")
+                println("---Find connectivity component which contains founded cell---")
                 for (t in T){
-                    println("Current connectivity component: ")
-                    t.printallCells()
+                    println("Current connectivity component: [${t.printallCells()}]")
                     if (t.checkComponentCell(destination.getcellId()) != t.getCells().size){
-                        println("\n \nCell \"${destination.getcellId()}\" contains in ")
-                        t.printallCells()
+                        println("\n \nCell \"${destination.getcellId()}\" contains in [${t.printallCells()}]")
                         t.removeEdge(p)
                         p.removeEdge(t)
                         p.mergeComp(t)

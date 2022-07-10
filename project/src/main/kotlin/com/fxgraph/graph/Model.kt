@@ -1,18 +1,35 @@
 package com.fxgraph.graph
 
+import java.util.Random
 import com.fxgraph.cells.CircleCell
+import com.fxgraph.vizualization.VXCell
+import com.fxgraph.vizualization.VXEdge
+import javafx.scene.paint.Color
 import kotlin.collections.HashMap
 
-
 class Model {
+    private var index = 0
+    private var dif_colors: MutableList<Color> = mutableListOf()
+    private var rand: Random = Random()
     private val graphParent: Cell = Cell("_ROOT_") // корневой узел невидимый
     private var allCells: MutableList<Cell> = mutableListOf() // список всех вершин
+    private var allVXCells: MutableList<VXCell> = mutableListOf()
     private var addedCells: MutableList<Cell> = mutableListOf() // добавленные вершины
+    private var addedVXCells: MutableList<VXCell> = mutableListOf()
     private var removedCells: MutableList<Cell> = mutableListOf() // удалённые вершины
+    private var removedVXCells: MutableList<VXCell> = mutableListOf()
     private var allEdges: MutableList<Edge> = mutableListOf() // список рёбер
+    private var allVXEdges: MutableList<VXEdge> = mutableListOf()
     private var addedEdges: MutableList<Edge> = mutableListOf() // список добавленных рёбер
+    private var addedVXEdges: MutableList<VXEdge> = mutableListOf()
     private var removedEdges: MutableList<Edge> = mutableListOf() // список удалённых рёбер
+    private var removedVXEdges: MutableList<VXEdge> = mutableListOf()
     private var cellMap: HashMap<String,Cell> = hashMapOf()  // <id,cell> доступ к вершине по имени
+    private var allComponents: MutableList<Component> = mutableListOf() // список компонент связности
+    var n = 0
+    var log = Logger()
+    fun setAllComponents(temp:MutableList<Component>){allComponents = temp.toMutableList()}
+    fun getAllComponents():MutableList<Component>{return allComponents}
 
     fun clearAddedLists() { //очистить список рёбер и вершин (полное удаление)
         addedCells.clear();
@@ -22,7 +39,25 @@ class Model {
     fun  getaddedCells(): MutableList<Cell> { // получить список добавленных вершин
         return addedCells;
     }
+    private fun get_color(): Color{
 
+        var r: Double = rand.nextFloat() / 2f + 0.5
+        var g: Double = rand.nextFloat() / 2f + 0.5
+        var b: Double = rand.nextFloat() / 2f + 0.5
+        var col: Color = Color.color(r,g,b)
+        var first_expr: Boolean = col == Color.GREEN
+        var second_expr: Boolean = col == Color.WHITE
+        while (dif_colors.contains(col) == true  or first_expr or second_expr ){
+            r = rand.nextFloat() / 2f + 0.5
+            g = rand.nextFloat() / 2f + 0.5
+            b = rand.nextFloat() / 2f + 0.5
+            col = Color.color(r,g,b)
+        }
+        dif_colors.add(col)
+      //  var col: Color = Color(r,g,b)
+
+        return  col
+    }
     fun getremovedCells(): MutableList<Cell> { // получить список удалённых вершин
         return removedCells;
     }
@@ -42,24 +77,25 @@ class Model {
         return allEdges;
     }
     // вызывать только при нажатии мышки и нажатой клавише add
-    fun addCell(id: String) { // добавить вершину
-        val circlecell: CircleCell = CircleCell(id)
-        addCell(circlecell)
+   // fun addCell(id: String) { // добавить вершину
+   //     val circlecell: CircleCell = CircleCell(id)
+  //      addCell(circlecell)
 
+ //   }
+    fun addCell(cell: VXCell) {  // приватный метод
+
+        addedCells.add(cell.cell) // добавить в список добавленных
+        addedVXCells.add(cell)
+        cellMap[cell.getcellId()] = cell.cell // присвоить пару ключ-значение
+        merge()
     }
-    fun addCell(cell: Cell) {  // приватный метод
-
-        addedCells.add(cell) // добавить в список добавленных
-
-        cellMap[cell.getcellId()] = cell // присвоить пару ключ-значение
-
-    }
-    fun del_edge(edge: Edge){
+    fun del_edge(edge: Edge,cur: VXEdge){
         removedEdges.add(edge)
+        removedVXEdges.add(cur)
         merge()
     }
 
-    fun addEdge( sourceId: String, targetId: String, weight : Int) { // добавить ребро
+    fun addEdge( sourceId: String, targetId: String, weight : Int, cur: VXEdge) { // добавить ребро
 
         val sourceCell: Cell = cellMap[sourceId]!!; // получение вершин по имени
         val targetCell: Cell = cellMap[targetId]!!;
@@ -67,7 +103,7 @@ class Model {
         val edge: Edge = Edge( sourceCell, targetCell, weight); // создание ребра
 
         addedEdges.add(edge); // добавление ребра в список
-
+        addedVXEdges.add(cur)
     }
 
 
@@ -83,6 +119,7 @@ class Model {
         for(i in getAllEdges()){
             if ((i.getsource() == temp1 && i.gettarget() == temp2 || i.getsource() == temp2 && i.gettarget() == temp1) && weight == i.getweight())
                 return i
+            index += 1
         }
         return null
     }
@@ -108,89 +145,121 @@ class Model {
         // cells
         allCells.addAll( addedCells); // добавить список добавленных вершин во все
         allCells.removeAll( removedCells); // удалить все удалённые
-
+        allVXCells.addAll(addedVXCells)
+        allVXCells.removeAll(removedVXCells)
         addedCells.clear();
+        addedVXCells.clear()
         removedCells.clear(); // очистить буфферы
-
+        removedVXCells.clear()
         // edges
         allEdges.addAll( addedEdges);
         allEdges.removeAll( removedEdges); // сделать также с рёбрами
-
+        allVXEdges.addAll(addedVXEdges)
+        allVXEdges.removeAll(removedVXEdges)
         addedEdges.clear();
+        addedVXEdges.clear()
         removedEdges.clear(); // очистить буфферы
+        removedVXEdges.clear()
 
     }
-    fun remove_cell(cell:Cell){
-        removedCells.add(cell)
+    fun remove_cell(cell:VXCell){
+        removedCells.add(cell.cell)
+        removedVXCells.add(cell)
         merge()
     }
 
     fun clear_all(){
         allCells.clear()// список всех вершин
+        allVXCells.clear()
         addedCells.clear()  // добавленные вершины
+        addedVXCells.clear()
         removedCells.clear() // удалённые вершины
+        removedVXCells.clear()
         allEdges.clear() // список рёбер
+        allVXEdges.clear()
         addedEdges.clear()// список добавленных рёбер
+        addedVXEdges.clear()
         removedEdges.clear() // список удалённых рёбер
+        removedVXEdges.clear()
         cellMap.clear()  // <id,cell> доступ к вершине по имени
     }
-    fun BoruvkaMST(): MutableList<Edge>? {
-        if (this.getAllEdges().isNotEmpty()){
-            var T = mutableListOf<Component>()
-            for (i in 0 until allCells.size){
-                var temp = Component()
-                temp.addCells(getallCells()[i])
-                temp.setAllEdges(getallCells()[i].getCellChildren())
-                T.add(temp)
-            }
+    fun getallVXCells(): MutableList<VXCell>{
+        return allVXCells
+    }
+    fun createAllComponents():Boolean {
+        if (this.getAllEdges().isNotEmpty() && getAllComponents().size!=1) {
+            if (getAllComponents().isEmpty()) {
+                for (i in 0 until allCells.size) {
+                    var temp = Component()
+                    temp.addCells(getallCells()[i]) // создал компоненты (перекрасить все вершины)
+                    ///
+                    getallVXCells()[i].fill = get_color() // покраска вершин
+                    ///
+                    temp.addVXCells(getallVXCells()[i])
 
-            var n = 0
-
-            while (T.size > 1){
-                var p = T[n]
-                println("Cells in current connectivity component [${p.printallCells()}]")
-                var destination = Cell()
-                var num: Int = 0
-                print("---Find minimal edge from current connectivity component---")
-                for (i in p.getEdges()){
-                    println("Current cell: ${i.key.getcellId()} \nedge in question: ${i.value}")
-                    println("Current minimal edge: $num \nThe current cell to which the edge is directed: ${destination.getcellId()} \n")
-                    if (destination.getcellId().isEmpty()){
-                        destination = i.key
-                        num = i.value
-                    } else if (i.value < num){
-                        num = i.value
-                        destination = i.key
-                    }
+                    temp.setAllEdges(getallCells()[i].getCellChildren())
+                    getAllComponents().add(temp)
                 }
-                println("Cell found: ${destination.getcellId()}\nEdge found: $num\n")
-                println("---Find connectivity component which contains founded cell---")
-                for (t in T){
-                    println("Current connectivity component: [${t.printallCells()}]")
-                    if (t.checkComponentCell(destination.getcellId()) != t.getCells().size){
-                        println("\n \nCell \"${destination.getcellId()}\" contains in [${t.printallCells()}]")
-                        t.removeEdge(p)
-                        p.removeEdge(t)
-                        p.mergeComp(t)
-                        findEdge(p, destination, num)?.let { p.addAllEdges(it)}
-                        T.remove(t)
-                        break
-                    }
-                }
-
-
-                n++
-                if (n > T.size - 1) n = 0
-                println("==========")
+                return true
             }
-
-            println("Final edges in MST")
-            for (i in T){
-                for (j in i.getAllEdges())
-                    println("${j.getsource().getcellId()} ${j.getweight()} ${j.gettarget().getcellId()}")
-                println("=====")
+            return true
+        }
+        return false
+    }
+    fun stepAlgoritm(){
+        var p = getAllComponents()[n]
+        log.log("Вершины, из которых состоит рассматриваемая компонента-связности - [${p.printallCells()}]\n")
+        var destination = Cell()
+        var num: Int = 0
+        log.log("---Процес нахождения минимального ребра, через которое текущая компонента свазана с другой---")
+        for (i in p.getEdges()) {
+            log.log("Конечная вершина рассматримаевого ребра, находящаяся в другой компоненте: ${i.key.getcellId()} \nВес этого ребра: ${i.value}")
+            log.log("Конечная вершина текущего минимального ребра, которая находится в другой компоненте: ${destination.getcellId()} \nТекущий минимальный вес ребра: $num \n")
+            if (destination.getcellId().isEmpty()) {
+                destination = i.key
+                num = i.value
+            } else if (i.value < num) {
+                num = i.value
+                destination = i.key
             }
-            return T[0].getAllEdges()}
-        return null
+        }
+        log.log("Найденная конечная вершина минимального ребра: ${destination.getcellId()}\nВес этого ребра: $num\n")
+        log.log("---Нахождение компоненты, с которой произойдет слияние с текущей, через найденное минимальное ребро---")
+        for (t in getAllComponents()) {
+            log.log("Рассматриваемая для слияния компонента состоит из следующих вершин: [${t.printallCells()}]")
+            if (t.checkComponentCell(destination.getcellId()) != t.getCells().size) {
+                log.log("Последняя рассматриваемая компонента содержит нужную вершину - \"${destination.getcellId()}\"")
+                t.removeEdge(p)
+                p.removeEdge(t)
+                p.mergeComp(t,log) // перекрасить всё множество t в цвет множества p
+                findEdge(p, destination, num)?.let { p.addAllEdges(it,allVXEdges[index]) } // перекраска ребра
+                index = 0
+                getAllComponents().remove(t)
+                break
+            }
+        }
+        n++
+        if (n > getAllComponents().size - 1) n = 0
+        log.log("==========\n")
+    }
+    fun printresult(){
+        log.log("---Итог - Ребра из которх состоит минимальное остовное дерево---")
+        for (i in getAllComponents()) {
+            for (j in i.getAllEdges())
+                log.log("${j.getsource().getcellId()} ${j.getweight()} ${j.gettarget().getcellId()}")
+            log.log("=====")
+        }
+        log.endFile()
+    }
+    fun BoruvkaMST(index:Int) /*:MutableList<Edge>?*/{
+        if(index == 1) {
+            while (getAllComponents().size > 1) {
+                stepAlgoritm()
+            }
+            printresult()
+        }else if(index == 0 ){
+            stepAlgoritm()
+            if(getAllComponents().size==1){printresult()}
+        }
     }
 }

@@ -8,6 +8,7 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
@@ -69,6 +70,10 @@ class HelloController {
   for (cell in vxcells){
    cell.disableDrag()
   }
+   del_edge_button.style = "-fx-background-color: #ffa000"
+ add_vert_button.style = "-fx-background-color: #ffa000"
+ add_edge_button.style = "-fx-background-color: #ffa000"
+ del_vert_button.style = "-fx-background-color: #ffa000"
   edge.clear()
   scroll_pane.onMouseClicked = null
  }
@@ -76,14 +81,16 @@ class HelloController {
  private fun add_vert(event: ActionEvent) {
   event.consume()
   if (add_vert_button.style == "-fx-background-color: green") { // если включена
-   add_vert_button.style = "-fx-background-color: #ffa000"
    off_parametrs() // сброс всего
+   add_vert_button.style = "-fx-background-color: #ffa000"
+
    for(cell in vxcells){
     cell.enableDrag()
    }
   } else {                                                // включаем
-   add_vert_button.style = "-fx-background-color: green"
+
    off_parametrs()                                                    //сброс всех настроек
+   add_vert_button.style = "-fx-background-color: green"
    scroll_pane.onMouseClicked =  onMousePressedEventHandler_add_vert
   }
  }
@@ -98,22 +105,22 @@ class HelloController {
    cell_number += 1 // новое имя для другой вершины
    holst.children.add(cell) // добавить на холст
    holst.children.add(cell.get_lable())
-   model.addCell(cell.cell) // добавить в структуру
+   model.addCell(cell) // добавить в структуру
    model.merge()
-   //set_default()
   }
  ////////////////////////////////////////////////////////////////////////////////////
  @FXML
  private fun del_vert(event: ActionEvent) {
   event.consume()
   if(del_vert_button.style == "-fx-background-color: green") { // если включена
-   del_vert_button.style = "-fx-background-color: #ffa000"
    off_parametrs() // сброс всего
+   del_vert_button.style = "-fx-background-color: #ffa000"
    for(cell in vxcells){
     cell.enableDrag()
    }
   }
   else{
+   off_parametrs()
    del_vert_button.style = "-fx-background-color: green"
    for(cell in vxcells){
     cell.onMousePressed = onMousePressed_del_vert
@@ -124,7 +131,7 @@ class HelloController {
 
  var onMousePressed_del_vert = EventHandler<MouseEvent> {event ->
   val node = event.source as VXCell
-  model.remove_cell(node.cell)
+  model.remove_cell(node)
   cleaning(node)
   node.remove_connection()
   for(e in node.edgesmap.values){
@@ -137,27 +144,40 @@ class HelloController {
   holst.children.remove(node)
  }
  private fun cleaning(cell: VXCell){
+
   for(neighbor in cell.neighbors){
    val cur = cell.weightmap[neighbor]
-   cur?.let { Edge(cell.cell,neighbor.cell, it) }?.let { model.del_edge(it) }
-   cur?.let { Edge(neighbor.cell,cell.cell, it) }?.let { model.del_edge(it) }
+   val e: VXEdge? = cell.weightmap[neighbor]?.let { VXEdge(cell,neighbor, it) }
+   val second_e: VXEdge? = cell.weightmap[neighbor]?.let { VXEdge(neighbor,cell, it) }
+   cur?.let { Edge(cell.cell,neighbor.cell, it) }?.let {
+    if (e != null) {
+     model.del_edge(it,e)
+    }
+   }
+   cur?.let { Edge(neighbor.cell,cell.cell, it) }?.let {
+    if (second_e != null) {
+     model.del_edge(it,second_e)
+    }
+   }
   }
  }
  /////////////////////////////////////////////////////////////////////////////
  @FXML
  private fun add_edge(event: ActionEvent) {
-  event.consume()
+  //event.consume()
   if (add_edge_button.style == "-fx-background-color: green") {
-   add_edge_button.style = "-fx-background-color: #ffa000"
    off_parametrs()
+   add_edge_button.style = "-fx-background-color: #ffa000"
    for(cell in vxcells){
     cell.enableDrag()
    }
   } else {
+   off_parametrs()
    add_edge_button.style = "-fx-background-color: green"
    for(cell in vxcells){
     cell.disableDrag()
     cell.onMousePressed = onMousePressed_add_edge
+    cell.onMouseDragged = onMousePressed_add_edge
    }
   }
  }
@@ -165,6 +185,7 @@ class HelloController {
   val node = event.source as VXCell
   node.stroke = Color.FIREBRICK
   edge.add(node)
+  println(edge.size)
   if(edge.size == 2){
    if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
     val stage = Stage()
@@ -177,6 +198,8 @@ class HelloController {
     stage.initModality(Modality.APPLICATION_MODAL)
     stage.showAndWait()
     val e: VXEdge = VXEdge(edge[0],edge[1],weight)
+    edge[0].stroke = Color.GREEN
+    edge[1].stroke = Color.GREEN
     e.set_label(Text(weight.toString()))
     vxedges.add(e)
     edge[0].edgesmap[edge[1]] = e
@@ -189,7 +212,7 @@ class HelloController {
     edge[1].weightmap[edge[0]] = weight
     holst.children.add(e.get_label())
     holst.children.add(e)
-    model.addEdge(e.getsource().getcellId(),e.gettarget().getcellId(),weight)
+    model.addEdge(e.getsource().getcellId(),e.gettarget().getcellId(),weight,e)
     model.merge()
    }
    edge.clear()
@@ -201,12 +224,13 @@ class HelloController {
  private fun del_edge(event: ActionEvent) {
   event.consume()
   if (del_edge_button.style == "-fx-background-color: green") {
-   del_edge_button.style = "-fx-background-color: #ffa000"
    off_parametrs()
+   del_edge_button.style = "-fx-background-color: #ffa000"
    for (cell in vxcells) {
     cell.enableDrag()
    }
   } else {
+   off_parametrs()
    del_edge_button.style = "-fx-background-color: green"
    for(cell in vxcells){
     cell.disableDrag()
@@ -239,8 +263,16 @@ class HelloController {
     //edge[1].edges.remove(e)
     //edge[1].edges.remove(second_e)
     edge[1].weightmap.remove(edge[0])
-    cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let { model.del_edge(it) }
-    cur?.let { Edge(edge[1].cell,edge[0].cell, it) }?.let { model.del_edge(it) }
+    cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
+     if (e != null) {
+      model.del_edge(it,e)
+     }
+    }
+    cur?.let { Edge(edge[1].cell,edge[0].cell, it) }?.let {
+     if (second_e != null) {
+      model.del_edge(it,second_e)
+     }
+    }
 
    }
    edge.clear()
@@ -250,10 +282,15 @@ class HelloController {
 
  @FXML
  private fun result() {
-  model.BoruvkaMST()
+  if(model.createAllComponents()){
+   model.BoruvkaMST(1)
+  }
+
  }
  @FXML
  private fun step_forward() {
-
+  if(model.createAllComponents()){
+   model.BoruvkaMST(0)
+  }
  }
 }

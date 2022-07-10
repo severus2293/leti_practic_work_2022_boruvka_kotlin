@@ -1,10 +1,14 @@
 package com.fxgraph.graph
 
+import com.fxgraph.vizualization.VXCell
+import com.fxgraph.vizualization.VXEdge
 import kotlin.math.min
 
 class Component {
     private var Cells: MutableList<Cell> = mutableListOf() // список всех вершин
+    private var VXCells: MutableList<VXCell> = mutableListOf()
     private var allEdges: MutableList<Edge> = mutableListOf() // список рёбер внутри компоненты
+    private var allVXEdges: MutableList<VXEdge> = mutableListOf()
     private var edges = mutableMapOf<Cell, Int>() // список рёбер соединяющий разные компоненты
 
     fun getCells() = Cells
@@ -21,7 +25,7 @@ class Component {
         return Cells.size
     }
 
-    fun printneigbors() {
+    fun printneigbors():String{
         var str1 = ""
         var str2 = ""
         for (i in edges.keys) {
@@ -30,8 +34,7 @@ class Component {
         for (i in edges.values) {
             str2 += "$i "
         }
-        println("[$str1]\n[$str2]")
-
+        return "\n[${str1.trim()}]\n[${str2.trim()}]"
     }
 
 
@@ -40,7 +43,12 @@ class Component {
             this.edges.remove(i)}
 
     fun addCells(temp: Cell){Cells.add(temp)}
-    fun addAllEdges(temp: Edge){allEdges.add(temp)}
+    fun addVXCells(temp: VXCell){VXCells.add(temp)}
+    fun addAllEdges(temp: Edge,cur: VXEdge){
+        allEdges.add(temp)
+        cur.stroke = VXCells[0].fill
+        allVXEdges.add(cur)
+    }
     fun addEdges(temp: Cell, num: Int){edges[temp] = num}
 
     fun setCells(temp: MutableList<Cell>) {Cells = temp}
@@ -55,22 +63,30 @@ class Component {
         return res.trim()
     }
 
-    fun mergeComp(temp: Component){
-        println("---Beginning of merging of components---")//-------
-        println("First component [${this.printallCells()}]")//  Вывод компонент свзяности
-        println("Second component [${temp.printallCells()}]")//------
+    fun mergeComp(temp: Component,log:Logger){
+        log.log("\n---Начало слияния двух компонент-связности---")//-------
+        log.log("Вершины первой компоненты, в которую войдут вершины и ребра второй - [${this.printallCells()}]")//  Вывод компонент свзяности
+        log.log("Вершины второй компоненты, которая будет поглощена первой - [${temp.printallCells()}]")//------
         for (i in temp.Cells){
             this.Cells.add(i)
         }
+        for(i in temp.VXCells){
+            i.fill = this.VXCells[0].fill
+            this.VXCells.add(i)
+        }
         for (i in temp.allEdges){
             this.allEdges.add(i)
+        }
+        for(i in temp.allVXEdges){
+            i.stroke = this.VXCells[0].fill
+            this.allVXEdges.add(i)
         }
 
         var keys_1 = this.edges.keys
         var keys_2 = temp.edges.keys
 
-        println("The first component of connectivity contains the following edges ${this.printneigbors()}")
-        println("The second component of connectivity contains the following edges ${temp.printneigbors()}")
+        log.log("Первая компонента соединена с другими через следующие ребра, конечные вершины и их вес:${this.printneigbors()}")
+        log.log("Вторая компонента соединена с другими через следующие ребра, конечные вершины и их вес:${temp.printneigbors()}")
 
         for (i in 0 until keys_2.size){
             if (keys_2.elementAt(i) in keys_1){
@@ -83,8 +99,10 @@ class Component {
             }
         }
 
-        println("List of edges after joining the connectivity components ${this.printneigbors()}")
+        log.log("Список ребер получившейся компоненты, с помощью которых она соединена с другими, их конечные вершины и вес:${this.printneigbors()}")
 
     }
+
+
 
 }

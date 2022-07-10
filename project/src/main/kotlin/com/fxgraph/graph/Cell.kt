@@ -2,6 +2,7 @@ package com.fxgraph.graph
 
 import javafx.scene.Node
 import javafx.scene.layout.Pane
+import javafx.scene.shape.Circle
 
 open class Cell(private val cellId: String = ""): Pane() {
     private var children = mutableMapOf<Cell, Int>()

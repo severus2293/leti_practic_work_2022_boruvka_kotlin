@@ -1,7 +1,6 @@
 package com.fxgraph.graph
 
 import java.util.Random
-import com.fxgraph.cells.CircleCell
 import com.fxgraph.vizualization.VXCell
 import com.fxgraph.vizualization.VXEdge
 import javafx.scene.paint.Color
@@ -27,7 +26,7 @@ class Model {
     private var cellMap: HashMap<String,Cell> = hashMapOf()  // <id,cell> доступ к вершине по имени
     private var allComponents: MutableList<Component> = mutableListOf() // список компонент связности
     var n = 0
-    var log = Logger()
+    lateinit var log: Logger
     fun setAllComponents(temp:MutableList<Component>){allComponents = temp.toMutableList()}
     fun getAllComponents():MutableList<Component>{return allComponents}
 
@@ -114,7 +113,6 @@ class Model {
         }
     }
 
-
     fun findEdgeinList(temp1: Cell, temp2: Cell, weight: Int): Edge? {
         for(i in getAllEdges()){
             if ((i.getsource() == temp1 && i.gettarget() == temp2 || i.getsource() == temp2 && i.gettarget() == temp1) && weight == i.getweight())
@@ -141,8 +139,6 @@ class Model {
 
 
     fun merge() {
-
-        // cells
         allCells.addAll( addedCells); // добавить список добавленных вершин во все
         allCells.removeAll( removedCells); // удалить все удалённые
         allVXCells.addAll(addedVXCells)
@@ -151,7 +147,6 @@ class Model {
         addedVXCells.clear()
         removedCells.clear(); // очистить буфферы
         removedVXCells.clear()
-        // edges
         allEdges.addAll( addedEdges);
         allEdges.removeAll( removedEdges); // сделать также с рёбрами
         allVXEdges.addAll(addedVXEdges)
@@ -206,15 +201,20 @@ class Model {
         }
         return false
     }
+    fun checkEdgesOut(): Boolean {
+        for (i in getAllComponents())
+            if (i.getEdges().isEmpty())
+                return false
+        return true
+    }
     fun stepAlgoritm(){
         var p = getAllComponents()[n]
         log.log("Вершины, из которых состоит рассматриваемая компонента-связности - [${p.printallCells()}]\n")
         var destination = Cell()
         var num: Int = 0
-        log.log("---Процес нахождения минимального ребра, через которое текущая компонента свазана с другой---")
+        log.log("---Процесc нахождения минимального ребра, через которое текущая компонента свазана с другой---")
         for (i in p.getEdges()) {
             log.log("Конечная вершина рассматримаевого ребра, находящаяся в другой компоненте: ${i.key.getcellId()} \nВес этого ребра: ${i.value}")
-            log.log("Конечная вершина текущего минимального ребра, которая находится в другой компоненте: ${destination.getcellId()} \nТекущий минимальный вес ребра: $num \n")
             if (destination.getcellId().isEmpty()) {
                 destination = i.key
                 num = i.value
@@ -222,6 +222,7 @@ class Model {
                 num = i.value
                 destination = i.key
             }
+            log.log("Конечная вершина текущего минимального ребра, которая находится в другой компоненте: ${destination.getcellId()} \nТекущий минимальный вес ребра: $num \n")
         }
         log.log("Найденная конечная вершина минимального ребра: ${destination.getcellId()}\nВес этого ребра: $num\n")
         log.log("---Нахождение компоненты, с которой произойдет слияние с текущей, через найденное минимальное ребро---")
@@ -249,16 +250,18 @@ class Model {
                 log.log("${j.getsource().getcellId()} ${j.getweight()} ${j.gettarget().getcellId()}")
             log.log("=====")
         }
-        log.endFile()
+        allComponents.clear()
     }
-    fun BoruvkaMST(index:Int) /*:MutableList<Edge>?*/{
+    fun BoruvkaMST(index:Int){
         if(index == 1) {
-            while (getAllComponents().size > 1) {
+            while (getAllComponents().size > 1 && checkEdgesOut()) {
                 stepAlgoritm()
             }
-            printresult()
+            if (getAllComponents().size == 1 || checkEdgesOut())
+                printresult()
         }else if(index == 0 ){
-            stepAlgoritm()
+            if (checkEdgesOut())
+                stepAlgoritm()
             if(getAllComponents().size==1){printresult()}
         }
     }

@@ -1,11 +1,10 @@
 package com.fxgraph.graph
-//import java.io.*
-//import java.nio.charset.Charset
-class Logger() {
+import javafx.scene.control.TextArea
+import java.io.*
+import java.nio.charset.Charset
+class Logger(var console: TextArea) {
     fun log(temp:String){
         println(temp)
-    }
-    fun endFile(){
-
+        console.appendText(temp + "\n")
     }
 }

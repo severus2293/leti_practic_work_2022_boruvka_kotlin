@@ -13,145 +13,160 @@
 
 <AnchorPane fx:id="node" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #2E3348;" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.refactor_vizualize_graph_ktln.HelloController">
    <children>
-      <ScrollPane fx:id="scroll_pane" layoutX="26.0" layoutY="58.0" prefHeight="479.0" prefWidth="343.0" AnchorPane.bottomAnchor="63.0" AnchorPane.topAnchor="58.0">
-         <content>
-            <Pane fx:id="holst" prefHeight="483.0" prefWidth="346.0" />
-         </content></ScrollPane>
-      <GridPane layoutX="417.0" layoutY="60.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="479.0" prefWidth="428.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="416.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="35.0">
+      <GridPane layoutX="18.0" layoutY="20.0" prefHeight="565.0" prefWidth="867.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
         <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
-            <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="452.0" GridPane.hgrow="ALWAYS">
+            <ScrollPane fx:id="scroll_pane" prefHeight="479.0" prefWidth="205.0">
+               <content>
+                  <Pane fx:id="holst" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="565.0" prefWidth="434.0" />
+               </content>
+               <GridPane.margin>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </GridPane.margin>
+            </ScrollPane>
+            <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="479.0" prefWidth="428.0" GridPane.columnIndex="1">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.9999755859375" minWidth="10.0" prefWidth="279.9999755859375" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.20001220703125" minWidth="10.0" prefWidth="148.80002441406248" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="170.00000610351563" minHeight="10.0" prefHeight="153.20001831054688" vgrow="SOMETIMES" />
-                <RowConstraints maxHeight="123.59998168945316" minHeight="10.0" prefHeight="103.59998168945316" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <GridPane alignment="CENTER">
+                  <GridPane alignment="CENTER" prefHeight="267.0" prefWidth="452.0" GridPane.hgrow="ALWAYS">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="279.9999755859375" minWidth="10.0" prefWidth="279.9999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.20001220703125" minWidth="10.0" prefWidth="148.80002441406248" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="170.00000610351563" minHeight="10.0" prefHeight="153.20001831054688" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="123.59998168945316" minHeight="10.0" prefHeight="103.59998168945316" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button fx:id="add_vert_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#add_vert" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить вершину">
+                        <GridPane alignment="CENTER">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Button fx:id="add_vert_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#add_vert" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить вершину">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </padding>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="del_vert_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#del_vert" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить вершину" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="add_edge_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#add_edge" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить ребро" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="del_edge_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#del_edge" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить ребро" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                           </children>
+                        </GridPane>
+                        <GridPane GridPane.rowIndex="1">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Button fx:id="result_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#result" prefHeight="24.0" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Результат">
+                                 <font>
+                                    <Font name="Impact" size="13.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="40.0" left="5.0" right="5.0" top="40.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="step_forward_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#step_forward" prefHeight="25.6" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Шаг вперёд" GridPane.columnIndex="1">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="40.0" left="5.0" right="5.0" top="40.0" />
+                                 </GridPane.margin>
+                              </Button>
+                           </children>
+                        </GridPane>
+                        <GridPane alignment="CENTER" GridPane.columnIndex="1">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Button fx:id="open_file_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#open_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Открыть Файл">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <Button fx:id="save_file_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Сохранить файл" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font name="Impact" size="12.0" />
+                                 </font>
+                                 <GridPane.margin>
+                                    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                 </GridPane.margin>
+                              </Button>
+                           </children>
+                        </GridPane>
+                        <Button fx:id="clear_scene_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clear_holst" prefHeight="39.0" prefWidth="150.0" style="-fx-background-color: #ffa000;" text="Очистить холст" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="Impact" size="12.0" />
                            </font>
-                           <padding>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </padding>
                            <GridPane.margin>
-                              <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <Button fx:id="del_vert_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#del_vert" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить вершину" GridPane.columnIndex="1">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <Button fx:id="add_edge_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#add_edge" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Добавить ребро" GridPane.rowIndex="1">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <Button fx:id="del_edge_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#del_edge" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Удалить ребро" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="20.0" left="5.0" right="5.0" top="20.0" />
+                              <Insets bottom="40.0" left="20.0" right="20.0" top="40.0" />
                            </GridPane.margin>
                         </Button>
                      </children>
                   </GridPane>
-                  <GridPane GridPane.rowIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button fx:id="result_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#result" prefHeight="24.0" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Результат">
-                           <font>
-                              <Font name="Impact" size="13.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="40.0" left="5.0" right="5.0" top="40.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <Button fx:id="step_forward_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#step_forward" prefHeight="25.6" prefWidth="121.6" style="-fx-background-color: #ffa000;" text="Шаг вперёд" GridPane.columnIndex="1">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="40.0" left="5.0" right="5.0" top="40.0" />
-                           </GridPane.margin>
-                        </Button>
-                     </children>
-                  </GridPane>
-                  <GridPane alignment="CENTER" GridPane.columnIndex="1">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Button fx:id="open_file_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#open_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Открыть Файл">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                           </GridPane.margin>
-                        </Button>
-                        <Button fx:id="save_file_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save_file" prefHeight="26.0" prefWidth="120.0" style="-fx-background-color: #ffa000;" text="Сохранить файл" GridPane.rowIndex="1">
-                           <font>
-                              <Font name="Impact" size="12.0" />
-                           </font>
-                           <GridPane.margin>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                           </GridPane.margin>
-                        </Button>
-                     </children>
-                  </GridPane>
-                  <Button fx:id="clear_scene_button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clear_holst" prefHeight="39.0" prefWidth="150.0" style="-fx-background-color: #ffa000;" text="Очистить холст" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font name="Impact" size="12.0" />
-                     </font>
+                  <TextArea fx:id="my_console" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="217.0" prefWidth="409.0" GridPane.rowIndex="1">
                      <GridPane.margin>
-                        <Insets bottom="40.0" left="20.0" right="20.0" top="40.0" />
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </GridPane.margin>
-                  </Button>
+                  </TextArea>
                </children>
             </GridPane>
-            <TextArea fx:id="my_console" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="217.0" prefWidth="409.0" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </GridPane.margin>
-            </TextArea>
          </children>
       </GridPane>
    </children>

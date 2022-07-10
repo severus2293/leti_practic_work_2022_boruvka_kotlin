@@ -41,6 +41,7 @@ class VXEdge(var source: VXCell,var target: VXCell,val weight: Int): Line() {
         name.fill = Color.RED
         name.xProperty().bind(startXProperty().add(endXProperty()).divide(2).subtract(label.layoutBounds.width / 2));
         name.yProperty().bind(startYProperty().add(endYProperty()).divide(2).add(label.layoutBounds.height / 1.5));
+        name.requestFocus()
     }
 
     fun get_label(): Text{

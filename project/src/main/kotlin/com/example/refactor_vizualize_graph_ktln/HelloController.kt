@@ -1,34 +1,46 @@
 package com.example.refactor_vizualize_graph_ktln
 
 import com.fxgraph.graph.Edge
+import com.fxgraph.graph.Logger
 import com.fxgraph.graph.Model
+import com.fxgraph.layout.random.RandomLayout
 import com.fxgraph.vizualization.VXCell
 import com.fxgraph.vizualization.VXEdge
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.Cursor
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.TextArea
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.text.Text
+import javafx.stage.FileChooser
 import javafx.stage.Modality
 import javafx.stage.Stage
+import java.io.BufferedWriter
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.util.Collections.max
 
 class HelloController {
  private var cell_number: Int = 1
  var weight: Int = 0
+ private var cellmap: MutableMap<Int,VXCell> = hashMapOf()
+ private var layout: RandomLayout = RandomLayout()
  private var edge: MutableList<VXCell> = mutableListOf()
  private var model: Model = Model()
  private var vxcells: MutableList<VXCell> = mutableListOf()
  private var vxedges: MutableList<VXEdge> = mutableListOf()
+ @FXML
+ private lateinit var node: AnchorPane
  @FXML
  private lateinit var del_edge_button: Button
  @FXML
@@ -42,14 +54,156 @@ class HelloController {
  @FXML
  private lateinit var holst: Pane
  @FXML
- private fun save_file() {
+ private lateinit var my_console: TextArea
+ @FXML
+ private fun save_file(event: ActionEvent){
+  val ex1: FileChooser.ExtensionFilter = FileChooser.ExtensionFilter("Text Files", "*.txt")
+  event.consume()
+  val filechooser: FileChooser = FileChooser()
+  filechooser.extensionFilters.add(ex1)
+  val selectedfile: File? = filechooser.showSaveDialog(node.scene.window)
+  if(selectedfile != null){
+   SaveGraph(selectedfile.path)
+  }
 
+ }
+
+ private fun SaveGraph(path: String){ ///доработать
+  var file: BufferedWriter = File(path).bufferedWriter()
+  file.write("${model.getAllEdges().size+getSingleCell()}\n")
+  for(i in  model.getAllEdges()){
+   file.write("${i.getsource().getcellId()} ${i.gettarget().getcellId()} ${i.getweight()}\n")
+  }
+  file.close()
+ }
+ private fun getSingleCell():Int{
+  var res = 0
+  for(i in model.getallCells()){
+   if(i.getCellChildren().isEmpty()){res++}
+  }
+  return res
  }
 
  @FXML
- private fun open_file() {
+ fun initialize() {
+  model.log = Logger(my_console)
+ }
+ @FXML
+ private fun open_file(event: ActionEvent){
+  val ex1: FileChooser.ExtensionFilter = FileChooser.ExtensionFilter("Text Files", "*.txt")
+
+  event.consume()
+  val filechooser: FileChooser = FileChooser()
+  filechooser.extensionFilters.add(ex1)
+  val selectedfile: File? = filechooser.showOpenDialog(node.scene.window)
+  if(selectedfile != null){
+   println(selectedfile.path)
+   take_graph(selectedfile.path)
+  }
+ }
+private fun take_graph(path: String){
+ try {
+  val inputStream: InputStream = File(path).inputStream()
+  val lineList = mutableListOf<String>()
+  inputStream.bufferedReader().forEachLine { lineList.add(it) }
+  val num_edge: Int = lineList[0].toInt()
+  if(lineList.size != num_edge + 1){
+    throw(java.lang.NumberFormatException())
+  }
+  var source: Int = 0
+  var target: Int = 0
+  var weight: Int = 0
+  var coordinate: MutableList<Double> = mutableListOf()
+  var edge: VXEdge
+  var sourcecell: VXCell
+  var targetcell: VXCell
+  for(i in 1..(num_edge)){
+   var strs = lineList[i].split(" ").toTypedArray()
+   source = strs[0].toInt()
+   target = strs[1].toInt()
+   weight = strs[2].toInt()
+   if(source != target){    //разные вершины
+
+       if(!cellmap.containsKey(source)) {
+        coordinate = layout.execute()
+        sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1])
+        cellmap[source] = sourcecell
+        sourcecell.setLabel(Text(source.toString()))
+        vxcells.add(sourcecell)                        //добавления источника
+        holst.children.add(sourcecell)
+        holst.children.add(sourcecell.get_lable())
+        model.addCell(sourcecell)
+        model.merge()
+       }
+       else{
+          sourcecell = cellmap[source]!!
+       }
+       if(!cellmap.containsKey(target)){
+        coordinate = layout.execute()
+        targetcell = VXCell(target.toString(),coordinate[0],coordinate[1])
+        cellmap[target] = targetcell
+        targetcell.setLabel(Text(target.toString()))
+        vxcells.add(targetcell)                          // добавления конца
+        holst.children.add(targetcell)
+        holst.children.add(targetcell.get_lable())
+        model.addCell(targetcell)
+        model.merge()
+       }
+       else{
+        targetcell = cellmap[target]!!
+       }
+       edge = VXEdge(sourcecell,targetcell,weight) // добавление ребра
+       edge.set_label(Text(weight.toString()))
+       vxedges.add(edge)
+       sourcecell.edgesmap[targetcell] = edge
+       sourcecell.neighbors.add(targetcell)
+       sourcecell.weightmap[targetcell] = weight
+       targetcell.edgesmap[sourcecell] = edge
+       targetcell.neighbors.add(sourcecell)
+       targetcell.weightmap[sourcecell] = weight
+       holst.children.add(edge.get_label())
+       holst.children.add(edge)
+       model.addEdge(edge.getsource().getcellId(),edge.gettarget().getcellId(),weight,edge)
+       model.merge()
+   }
+   else{
+    if(!cellmap.containsKey(source)) {
+     coordinate = layout.execute()
+     sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1])
+     cellmap[source] = sourcecell
+     sourcecell.setLabel(Text(source.toString()))
+     vxcells.add(sourcecell)                        //добавления источника
+     holst.children.add(sourcecell)
+     holst.children.add(sourcecell.get_lable())
+     model.addCell(sourcecell)
+     model.merge()
+    }
+   }
+  }
+  cell_number = max(cellmap.keys) + 1
+  inputStream.close()
+ }
+ catch(e: IOException){
+  val stage = Stage()
+  val loader = FXMLLoader(javaClass.getResource("readfile_exception.fxml"))
+  val root = loader.load<Parent>()
+  stage.title = "Exception"
+  stage.scene = Scene(root, 400.0, 200.0)
+  stage.initModality(Modality.APPLICATION_MODAL)
+  stage.showAndWait()
+ }
+ catch(e: java.lang.Exception){
+  val stage = Stage()
+  val loader = FXMLLoader(javaClass.getResource("wrong_data.fxml"))
+  val root = loader.load<Parent>()
+  stage.title = "Exception"
+  stage.scene = Scene(root, 400.0, 200.0)
+  stage.initModality(Modality.APPLICATION_MODAL)
+  stage.showAndWait()
+  clear_holst()
  }
 
+}
  @FXML
  fun clear_holst() {
   holst.children.removeAll(vxedges)
@@ -63,6 +217,8 @@ class HelloController {
   }
   vxcells.clear()
   model.clear_all()
+  cellmap.clear()
+  cell_number = 1
   off_parametrs()
  }
 
@@ -185,7 +341,6 @@ class HelloController {
   val node = event.source as VXCell
   node.stroke = Color.FIREBRICK
   edge.add(node)
-  println(edge.size)
   if(edge.size == 2){
    if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
     val stage = Stage()
@@ -244,7 +399,6 @@ class HelloController {
   node.stroke = Color.FIREBRICK
   edge.add(node)
   if(edge.size == 2){
-   println("del")
    if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
     val cur: Int? = edge[0].weightmap[edge[1]]
     val e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[0],edge[1], it) }

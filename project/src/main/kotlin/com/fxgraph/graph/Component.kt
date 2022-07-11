@@ -48,6 +48,7 @@ class Component {
     fun addAllEdges(temp: Edge,cur: VXEdge){
         allEdges.add(temp)
         cur.stroke = VXCells[0].fill
+        cur.style = "-fx-stroke-width: 4px"
         allVXEdges.add(cur)
     }
     fun addEdges(temp: Cell, num: Int){edges[temp] = num}

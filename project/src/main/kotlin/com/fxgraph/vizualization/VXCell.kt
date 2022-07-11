@@ -20,13 +20,14 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,15.0) {
     var cell: Cell = Cell(cellId)
     var isDragging: Boolean = false
 
-    //  var view: Circle = Circle(x,y,30.0)
-    //var name: Text = Text(cellId)
-    init {
 
+    init {
         stroke = Color.GREEN
         fill = Color.GREEN
         enableDrag()
+        relocate(x,y)
+
+
     }
 
     fun getcellId(): String {
@@ -77,118 +78,7 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,15.0) {
     /**
      * Enables user drag
      */
-    fun line_start_moved(edge: VXEdge){
-        class Point(var x: Double, var y: Double)
 
-        val dragDelta = Point(0.0, 0.0)
-        onMousePressed = EventHandler { event: MouseEvent ->
-            if (event.isPrimaryButtonDown) {
-               // edge.startXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-               // edge.startYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-               // name.xProperty().bind(centerXProperty().subtract(name.layoutBounds.width +radius))
-               // name.yProperty().bind(centerYProperty().add(name.layoutBounds.height + radius))
-                //name.xProperty().bind(centerXProperty().add(radiusProperty()))
-                // name.yProperty().bind(centerYProperty().add(radiusProperty()))
-                dragDelta.x = centerX - event.x
-                dragDelta.y = centerY - event.y
-                scene.cursor = Cursor.MOVE
-                isDragging = true
-                event.consume()
-            }
-        }
-        onMouseReleased = EventHandler { event: MouseEvent ->
-            //edge.startXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-           // edge.startYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-            // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-            //name.yProperty().bind(centerYProperty().add(radiusProperty()))
-            scene.cursor = Cursor.HAND
-            isDragging = false
-            event.consume()
-        }
-        onMouseDragged = EventHandler { event: MouseEvent ->
-            if (event.isPrimaryButtonDown) {
-               // edge.startXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-                //edge.startYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-                // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-                // name.yProperty().bind(centerYProperty().add(radiusProperty()))
-                val newX = event.x + dragDelta.x
-                val x = boundCenterCoordinate(newX, 0.0, parent.layoutBounds.width)
-                centerX = x
-                val newY = event.y + dragDelta.y
-                val y = boundCenterCoordinate(newY, 0.0, parent.layoutBounds.height)
-                centerY = y
-                this.relocate(x, y) /////
-            }
-        }
-        onMouseEntered = EventHandler { event: MouseEvent ->
-            if (!event.isPrimaryButtonDown) {
-                edge.startXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-                edge.startYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-                scene.cursor = Cursor.HAND
-            }
-        }
-        onMouseExited = EventHandler { event: MouseEvent ->
-            if (!event.isPrimaryButtonDown) {
-                scene.cursor = Cursor.DEFAULT
-            }
-        }
-    }
-    fun line_end_moved(edge: VXEdge){
-        class Point(var x: Double, var y: Double)
-
-        val dragDelta = Point(0.0, 0.0)
-        onMousePressed = EventHandler { event: MouseEvent ->
-            if (event.isPrimaryButtonDown) {
-               // edge.endXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-               // edge.endYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-                // name.xProperty().bind(centerXProperty().subtract(name.layoutBounds.width +radius))
-                // name.yProperty().bind(centerYProperty().add(name.layoutBounds.height + radius))
-                //name.xProperty().bind(centerXProperty().add(radiusProperty()))
-                // name.yProperty().bind(centerYProperty().add(radiusProperty()))
-                dragDelta.x = centerX - event.x
-                dragDelta.y = centerY - event.y
-                scene.cursor = Cursor.MOVE
-                isDragging = true
-                event.consume()
-            }
-        }
-        onMouseReleased = EventHandler { event: MouseEvent ->
-            //edge.endXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-            //edge.endYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-            // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-            //name.yProperty().bind(centerYProperty().add(radiusProperty()))
-            scene.cursor = Cursor.HAND
-            isDragging = false
-            event.consume()
-        }
-        onMouseDragged = EventHandler { event: MouseEvent ->
-            if (event.isPrimaryButtonDown) {
-                //edge.endXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-               // edge.endYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-                // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-                // name.yProperty().bind(centerYProperty().add(radiusProperty()))
-                val newX = event.x + dragDelta.x
-                val x = boundCenterCoordinate(newX, 0.0, parent.layoutBounds.width)
-                centerX = x
-                val newY = event.y + dragDelta.y
-                val y = boundCenterCoordinate(newY, 0.0, parent.layoutBounds.height)
-                centerY = y
-                this.relocate(x, y) /////
-            }
-        }
-        onMouseEntered = EventHandler { event: MouseEvent ->
-            if (!event.isPrimaryButtonDown) {
-                edge.endXProperty().bind(this.centerXProperty().add( this.radiusProperty()))
-                edge.endYProperty().bind(this.centerYProperty().add( this.radiusProperty()))
-                scene.cursor = Cursor.HAND
-            }
-        }
-        onMouseExited = EventHandler { event: MouseEvent ->
-            if (!event.isPrimaryButtonDown) {
-                scene.cursor = Cursor.DEFAULT
-            }
-        }
-    }
     fun enableDrag() {
         class Point(var x: Double, var y: Double)
 
@@ -198,8 +88,6 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,15.0) {
 
                 name.xProperty().bind(centerXProperty().subtract(name.layoutBounds.width +radius))
                 name.yProperty().bind(centerYProperty().add(name.layoutBounds.height + radius))
-                //name.xProperty().bind(centerXProperty().add(radiusProperty()))
-               // name.yProperty().bind(centerYProperty().add(radiusProperty()))
                 dragDelta.x = centerX - event.x
                 dragDelta.y = centerY - event.y
                 scene.cursor = Cursor.MOVE
@@ -208,16 +96,12 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,15.0) {
             }
         }
         onMouseReleased = EventHandler { event: MouseEvent ->
-           // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-            //name.yProperty().bind(centerYProperty().add(radiusProperty()))
             scene.cursor = Cursor.HAND
             isDragging = false
             event.consume()
         }
         onMouseDragged = EventHandler { event: MouseEvent ->
             if (event.isPrimaryButtonDown) {
-               // name.xProperty().bind(centerXProperty().add(radiusProperty()))
-               // name.yProperty().bind(centerYProperty().add(radiusProperty()))
                 val newX = event.x + dragDelta.x
                 val x = boundCenterCoordinate(newX, 0.0, parent.layoutBounds.width)
                 centerX = x
@@ -254,7 +138,7 @@ class VXCell(var cellId: String,x: Double,y:Double): Circle(x,y,15.0) {
         name = label
         name.style = "-fx-text-inner-color: red; -fx-font-size: 16px;"
         name.fill = Color.RED
-       // name.xProperty().bind(centerXProperty().add(radiusProperty()))
+            // name.xProperty().bind(centerXProperty().add(radiusProperty()))
        // name.yProperty().bind(centerYProperty().add(radiusProperty()))
         name.xProperty().bind(centerXProperty().subtract(name.layoutBounds.centerX))
         name.yProperty().bind(centerYProperty().subtract( name.layoutBounds.centerY))

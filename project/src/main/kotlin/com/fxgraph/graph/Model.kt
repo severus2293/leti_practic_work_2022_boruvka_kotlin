@@ -7,6 +7,7 @@ import javafx.scene.paint.Color
 import kotlin.collections.HashMap
 
 class Model {
+    var end_flag: Boolean = false
     private var index = 0
     private var dif_colors: MutableList<Color> = mutableListOf()
     private var rand: Random = Random()
@@ -91,6 +92,15 @@ class Model {
     fun del_edge(edge: Edge,cur: VXEdge){
         removedEdges.add(edge)
         removedVXEdges.add(cur)
+        for(i in 0..getallCells().size - 1){
+            if(allCells[i].getcellId() == edge.getsource().getcellId()){
+                allCells[i].removeCellChild(edge.gettarget())
+            }
+            if(allCells[i].getcellId() == edge.gettarget().getcellId()){
+                allCells[i].removeCellChild(edge.getsource())
+            }
+        }
+        edge.getsource()
         merge()
     }
 
@@ -112,6 +122,9 @@ class Model {
             graphParent.removeCellChild( cell);
         }
     }
+
+
+
 
     fun findEdgeinList(temp1: Cell, temp2: Cell, weight: Int): Edge? {
         for(i in getAllEdges()){
@@ -137,8 +150,18 @@ class Model {
         return null
     }
 
-
+    fun findComp(): Component?{
+        if(getAllComponents().size==1) {
+            return getAllComponents()[0]
+        }
+        for (i in getAllComponents())
+            if (i.getEdges().isEmpty())
+                return i
+        return null
+    }
     fun merge() {
+
+        // cells
         allCells.addAll( addedCells); // добавить список добавленных вершин во все
         allCells.removeAll( removedCells); // удалить все удалённые
         allVXCells.addAll(addedVXCells)
@@ -147,6 +170,7 @@ class Model {
         addedVXCells.clear()
         removedCells.clear(); // очистить буфферы
         removedVXCells.clear()
+        // edges
         allEdges.addAll( addedEdges);
         allEdges.removeAll( removedEdges); // сделать также с рёбрами
         allVXEdges.addAll(addedVXEdges)
@@ -201,11 +225,9 @@ class Model {
         }
         return false
     }
-    fun checkEdgesOut(): Boolean {
-        for (i in getAllComponents())
-            if (i.getEdges().isEmpty())
-                return false
-        return true
+    fun removecomponents(){
+        allComponents.clear()
+        n = 0
     }
     fun stepAlgoritm(){
         var p = getAllComponents()[n]
@@ -243,26 +265,31 @@ class Model {
         if (n > getAllComponents().size - 1) n = 0
         log.log("==========\n")
     }
-    fun printresult(){
+    fun printresult(comp:Component){
         log.log("---Итог - Ребра из которх состоит минимальное остовное дерево---")
-        for (i in getAllComponents()) {
-            for (j in i.getAllEdges())
-                log.log("${j.getsource().getcellId()} ${j.getweight()} ${j.gettarget().getcellId()}")
-            log.log("=====")
-        }
-        allComponents.clear()
+        for (i in comp.getAllEdges())
+            log.log("${i.getsource().getcellId()} ${i.getweight()} ${i.gettarget().getcellId()}")
+        log.log("=====")
+        end_flag = true
     }
     fun BoruvkaMST(index:Int){
         if(index == 1) {
             while (getAllComponents().size > 1 && checkEdgesOut()) {
                 stepAlgoritm()
             }
-            if (getAllComponents().size == 1 || checkEdgesOut())
-                printresult()
+            findComp()?.let { printresult(it) }
         }else if(index == 0 ){
-            if (checkEdgesOut())
+            if (checkEdgesOut()){
                 stepAlgoritm()
-            if(getAllComponents().size==1){printresult()}
+            }
+            if (getAllComponents().size == 1 || !checkEdgesOut())
+                findComp()?.let { printresult(it) }
         }
+    }
+    fun checkEdgesOut(): Boolean {
+        for (i in getAllComponents())
+            if (i.getEdges().isEmpty())
+                return false
+        return true
     }
 }

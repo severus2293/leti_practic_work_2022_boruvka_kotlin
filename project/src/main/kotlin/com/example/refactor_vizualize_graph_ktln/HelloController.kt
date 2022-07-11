@@ -1,9 +1,10 @@
 package com.example.refactor_vizualize_graph_ktln
 
+import com.fxgraph.graph.Cell
 import com.fxgraph.graph.Edge
 import com.fxgraph.graph.Logger
 import com.fxgraph.graph.Model
-import com.fxgraph.layout.random.RandomLayout
+import com.fxgraph.layout.SquareLayout
 import com.fxgraph.vizualization.VXCell
 import com.fxgraph.vizualization.VXEdge
 import javafx.event.ActionEvent
@@ -16,6 +17,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.ScrollPane
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
@@ -33,14 +35,21 @@ import java.util.Collections.max
 class HelloController {
  private var cell_number: Int = 1
  var weight: Int = 0
+ private var create_components: Boolean = false
+ private var buff_vxcells: MutableList<VXCell> = mutableListOf()
+ private var buff_vxedges: MutableList<VXEdge> = mutableListOf()
  private var cellmap: MutableMap<Int,VXCell> = hashMapOf()
- private var layout: RandomLayout = RandomLayout()
+ private var layout: SquareLayout = SquareLayout()
  private var edge: MutableList<VXCell> = mutableListOf()
  private var model: Model = Model()
  private var vxcells: MutableList<VXCell> = mutableListOf()
  private var vxedges: MutableList<VXEdge> = mutableListOf()
  @FXML
  private lateinit var node: AnchorPane
+ @FXML
+ private lateinit var result_button: Button
+ @FXML
+ private lateinit var step_forward_button: Button
  @FXML
  private lateinit var del_edge_button: Button
  @FXML
@@ -70,18 +79,30 @@ class HelloController {
 
  private fun SaveGraph(path: String){ ///доработать
   var file: BufferedWriter = File(path).bufferedWriter()
-  file.write("${model.getAllEdges().size+getSingleCell()}\n")
+  var size = model.getAllEdges().size
+  var singlecells: MutableList<Int> = getSingleCell()
+  size += singlecells[singlecells.size - 1]
+  file.write("${size}\n")
   for(i in  model.getAllEdges()){
    file.write("${i.getsource().getcellId()} ${i.gettarget().getcellId()} ${i.getweight()}\n")
   }
+  for(i in 0 until size - model.getAllEdges().size){
+   file.write("${singlecells[i]} ${singlecells[i]} ${0}")
+  }
   file.close()
  }
- private fun getSingleCell():Int{
+ private fun getSingleCell(): MutableList<Int>{
+  var cellslist: MutableList<Int> = mutableListOf()
   var res = 0
   for(i in model.getallCells()){
-   if(i.getCellChildren().isEmpty()){res++}
+   if(i.getCellChildren().isEmpty()){
+    cellslist.add(i.getcellId().toInt())
+    res++
+   }
+
   }
-  return res
+  cellslist.add(res)
+  return cellslist
  }
 
  @FXML
@@ -97,19 +118,16 @@ class HelloController {
   filechooser.extensionFilters.add(ex1)
   val selectedfile: File? = filechooser.showOpenDialog(node.scene.window)
   if(selectedfile != null){
-   println(selectedfile.path)
    take_graph(selectedfile.path)
   }
  }
 private fun take_graph(path: String){
  try {
+  layout.set_param(scroll_pane.width,scroll_pane.height)
   val inputStream: InputStream = File(path).inputStream()
   val lineList = mutableListOf<String>()
   inputStream.bufferedReader().forEachLine { lineList.add(it) }
   val num_edge: Int = lineList[0].toInt()
-  if(lineList.size != num_edge + 1){
-    throw(java.lang.NumberFormatException())
-  }
   var source: Int = 0
   var target: Int = 0
   var weight: Int = 0
@@ -126,61 +144,61 @@ private fun take_graph(path: String){
 
        if(!cellmap.containsKey(source)) {
         coordinate = layout.execute()
-        sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1])
+        sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1]) //coordinate[0] coordinate[1]
         cellmap[source] = sourcecell
         sourcecell.setLabel(Text(source.toString()))
-        vxcells.add(sourcecell)                        //добавления источника
-        holst.children.add(sourcecell)
-        holst.children.add(sourcecell.get_lable())
-        model.addCell(sourcecell)
-        model.merge()
+        buff_vxcells.add(sourcecell)
        }
        else{
           sourcecell = cellmap[source]!!
        }
        if(!cellmap.containsKey(target)){
         coordinate = layout.execute()
-        targetcell = VXCell(target.toString(),coordinate[0],coordinate[1])
+        targetcell = VXCell(target.toString(),coordinate[0], coordinate[1]) //coordinate[0] coordinate[1]
         cellmap[target] = targetcell
         targetcell.setLabel(Text(target.toString()))
-        vxcells.add(targetcell)                          // добавления конца
-        holst.children.add(targetcell)
-        holst.children.add(targetcell.get_lable())
-        model.addCell(targetcell)
-        model.merge()
+        buff_vxcells.add(targetcell)
        }
        else{
         targetcell = cellmap[target]!!
        }
        edge = VXEdge(sourcecell,targetcell,weight) // добавление ребра
        edge.set_label(Text(weight.toString()))
-       vxedges.add(edge)
        sourcecell.edgesmap[targetcell] = edge
        sourcecell.neighbors.add(targetcell)
        sourcecell.weightmap[targetcell] = weight
        targetcell.edgesmap[sourcecell] = edge
        targetcell.neighbors.add(sourcecell)
        targetcell.weightmap[sourcecell] = weight
-       holst.children.add(edge.get_label())
-       holst.children.add(edge)
-       model.addEdge(edge.getsource().getcellId(),edge.gettarget().getcellId(),weight,edge)
-       model.merge()
+       buff_vxedges.add(edge)
    }
    else{
     if(!cellmap.containsKey(source)) {
      coordinate = layout.execute()
-     sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1])
+     sourcecell = VXCell(source.toString(), coordinate[0], coordinate[1]) // coordinate[0] coordinate[1]
      cellmap[source] = sourcecell
      sourcecell.setLabel(Text(source.toString()))
-     vxcells.add(sourcecell)                        //добавления источника
-     holst.children.add(sourcecell)
-     holst.children.add(sourcecell.get_lable())
-     model.addCell(sourcecell)
-     model.merge()
+     buff_vxcells.add(sourcecell)
     }
    }
   }
   cell_number = max(cellmap.keys) + 1
+  clear_holst()
+  for(i in buff_vxcells) {
+   vxcells.add(i)
+   holst.children.add(i)
+   holst.children.add(i.get_lable())
+   model.addCell(i)
+   model.merge()
+  }
+  for(i in buff_vxedges){
+   vxedges.add(i)
+   holst.children.add(i.get_label())
+   holst.children.add(i)
+   model.addEdge(i.getsource().getcellId(),i.gettarget().getcellId(),weight,i)
+   model.merge()
+  }
+  layout.reset()
   inputStream.close()
  }
  catch(e: IOException){
@@ -200,7 +218,13 @@ private fun take_graph(path: String){
   stage.scene = Scene(root, 400.0, 200.0)
   stage.initModality(Modality.APPLICATION_MODAL)
   stage.showAndWait()
-  clear_holst()
+  for(i in buff_vxcells){
+    cellmap.remove(i.cell.getcellId().toInt())
+  }
+ }
+ finally {
+     buff_vxcells.clear()
+     buff_vxedges.clear()
  }
 
 }
@@ -219,7 +243,9 @@ private fun take_graph(path: String){
   model.clear_all()
   cellmap.clear()
   cell_number = 1
+  model.removecomponents()
   off_parametrs()
+  my_console.clear()
  }
 
  private fun off_parametrs(){
@@ -299,6 +325,19 @@ private fun take_graph(path: String){
   holst.children.remove(node.get_lable())
   holst.children.remove(node)
  }
+ private fun set_default(){
+   for(i in vxcells){
+     i.fill = Color.GREEN
+   }
+  for(i in vxedges){
+    i.stroke = Color.BLACK
+   i.style = "-fx-stroke-width: 1px"
+  }
+  model.removecomponents()
+  my_console.clear()
+  create_components = false
+  result_button.setOnAction { result(event = ActionEvent())}
+  }
  private fun cleaning(cell: VXCell){
 
   for(neighbor in cell.neighbors){
@@ -352,6 +391,37 @@ private fun take_graph(path: String){
     stage.scene = Scene(root, 400.0, 200.0)
     stage.initModality(Modality.APPLICATION_MODAL)
     stage.showAndWait()
+    if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
+     val cur: Int? = edge[0].weightmap[edge[1]]
+     val e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[0],edge[1], it) }
+     val second_e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[1],edge[0], it) }
+     edge[0].neighbors.remove(edge[1])
+     holst.children.remove(edge[0].edgesmap[edge[1]])
+     holst.children.remove(edge[1].edgesmap[edge[0]])
+     holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
+     holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
+     edge[0].edgesmap.remove(edge[1])
+     // edge[0].edges.remove(e)
+     // edge[0].edges.remove(second_e)
+     edge[0].weightmap.remove(edge[1])
+     edge[1].neighbors.remove(edge[0])
+     edge[1].edgesmap.remove(edge[0])
+     //edge[1].edges.remove(e)
+     //edge[1].edges.remove(second_e)
+     edge[1].weightmap.remove(edge[0])
+     cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
+      if (e != null) {
+       model.del_edge(it,e)
+      }
+     }
+     cur?.let { Edge(edge[1].cell,edge[0].cell, it) }?.let {
+      if (second_e != null) {
+       model.del_edge(it,second_e)
+      }
+     }
+
+    }
+
     val e: VXEdge = VXEdge(edge[0],edge[1],weight)
     edge[0].stroke = Color.GREEN
     edge[1].stroke = Color.GREEN
@@ -374,8 +444,131 @@ private fun take_graph(path: String){
   }
   event.consume()
  }
- /////////////////////////////////////////////////////////////////////////////
  @FXML
+ private fun del_edge(event: ActionEvent) {
+  event.consume()
+  if (del_edge_button.style == "-fx-background-color: green") {
+   off_parametrs()
+   del_edge_button.style = "-fx-background-color: #ffa000"
+   for (cell in vxcells) {
+    cell.enableDrag()
+   }
+  } else {
+   off_parametrs()
+   del_edge_button.style = "-fx-background-color: green"
+   for(cell in vxcells){
+    cell.disableDrag()
+    cell.onMousePressed = onMousePressed_del_edge
+   }
+  }
+ }
+
+ var onMousePressed_del_edge = EventHandler<MouseEvent> {event ->
+  val node = event.source as VXCell
+  node.stroke = Color.FIREBRICK
+  edge.add(node)
+  if(edge.size == 2){
+   println("del")
+   if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
+    val cur: Int? = edge[0].weightmap[edge[1]]
+    val e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[0],edge[1], it) }
+    val second_e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[1],edge[0], it) }
+    edge[0].neighbors.remove(edge[1])
+    holst.children.remove(edge[0].edgesmap[edge[1]])
+    holst.children.remove(edge[1].edgesmap[edge[0]])
+    holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
+    holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
+    edge[0].edgesmap.remove(edge[1])
+    // edge[0].edges.remove(e)
+    // edge[0].edges.remove(second_e)
+    edge[0].weightmap.remove(edge[1])
+    edge[1].neighbors.remove(edge[0])
+    edge[1].edgesmap.remove(edge[0])
+    //edge[1].edges.remove(e)
+    //edge[1].edges.remove(second_e)
+    edge[1].weightmap.remove(edge[0])
+    cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
+     if (e != null) {
+      model.del_edge(it,e)
+      edge[0].cell.removeCellChild(edge[1].cell)
+      edge[1].cell.removeCellChild(edge[0].cell)
+      for(i in model.getallCells()){
+       if(i.getcellId() == edge[0].cell.getcellId() ){
+        i.removeCellChild(edge[1].cell)
+       }
+      }
+
+     }
+    }
+    cur?.let { Edge(edge[1].cell,edge[0].cell, it) }?.let {
+     if (second_e != null) {
+      model.del_edge(it,second_e)
+     }
+    }
+
+   }
+   edge.clear()
+  }
+  event.consume()
+ }
+
+ /*@FXML
+ private fun add_edge(event: ActionEvent) {
+  //event.consume()
+  if (add_edge_button.style == "-fx-background-color: green") {
+   off_parametrs()
+   add_edge_button.style = "-fx-background-color: #ffa000"
+   for(cell in vxcells){
+    cell.enableDrag()
+   }
+  } else {
+   off_parametrs()
+   add_edge_button.style = "-fx-background-color: green"
+   for(cell in vxcells){
+    cell.disableDrag()
+    cell.onMousePressed = onMousePressed_add_edge
+    cell.onMouseDragged = onMousePressed_add_edge
+   }
+  }
+ }
+ var onMousePressed_add_edge = EventHandler<MouseEvent> {event ->
+  val node = event.source as VXCell
+  node.stroke = Color.FIREBRICK
+  edge.add(node)
+  if(edge.size == 2){
+   if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
+    val stage = Stage()
+    val loader = FXMLLoader(javaClass.getResource("edge_weight_dialog.fxml"))
+    val root = loader.load<Parent>()
+    val lc: NewFolderController = loader.getController<Any>() as NewFolderController
+    lc.main = this
+    stage.title = "Create edge"
+    stage.scene = Scene(root, 400.0, 200.0)
+    stage.initModality(Modality.APPLICATION_MODAL)
+    stage.showAndWait()
+    println(weight)
+    val e: VXEdge = VXEdge(edge[0],edge[1],weight)
+    edge[0].stroke = Color.GREEN
+    edge[1].stroke = Color.GREEN
+    e.set_label(TextField(weight.toString()))
+    vxedges.add(e)
+    edge[0].edgesmap[edge[1]] = e
+    edge[0].neighbors.add(edge[1])
+    edge[0].weightmap[edge[1]] = weight
+    edge[1].edgesmap[edge[0]] = e
+    edge[1].neighbors.add(edge[0])
+    edge[1].weightmap[edge[0]] = weight
+    holst.children.add(e.get_label())
+    holst.children.add(e)
+    model.addEdge(e.getsource().getcellId(),e.gettarget().getcellId(),weight,e)
+    model.merge()
+   }
+   edge.clear()
+  }
+  event.consume()
+ }*/
+ /////////////////////////////////////////////////////////////////////////////
+/* @FXML
  private fun del_edge(event: ActionEvent) {
   event.consume()
   if (del_edge_button.style == "-fx-background-color: green") {
@@ -409,13 +602,9 @@ private fun take_graph(path: String){
     holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
     holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
     edge[0].edgesmap.remove(edge[1])
-    // edge[0].edges.remove(e)
-    // edge[0].edges.remove(second_e)
     edge[0].weightmap.remove(edge[1])
     edge[1].neighbors.remove(edge[0])
     edge[1].edgesmap.remove(edge[0])
-    //edge[1].edges.remove(e)
-    //edge[1].edges.remove(second_e)
     edge[1].weightmap.remove(edge[0])
     cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
      if (e != null) {
@@ -432,19 +621,73 @@ private fun take_graph(path: String){
    edge.clear()
   }
   event.consume()
- }
+ }*/
 
  @FXML
- private fun result() {
-  if(model.createAllComponents()){
+ private fun result(event: ActionEvent) {
+  off_parametrs()
+  del_edge_button.onAction = null
+  add_vert_button.onAction = null
+  add_edge_button.onAction = null
+  del_vert_button.onAction = null
+  for(i in vxcells){
+   i.enableDrag()
+  }
+  if(model.getAllComponents().isEmpty()){
+
+   create_components = model.createAllComponents()
+  }
+  if(create_components){
    model.BoruvkaMST(1)
+   if(model.end_flag == true) {                 //алгоритм завершился
+    model.end_flag = false
+    result_button.text = "Заново"
+    result_button.setOnAction(EventHandler<ActionEvent?> {
+     step_forward_button.setOnAction { step_forward(event = ActionEvent()) }
+     result_button.text = "Результат"
+     set_default()
+     add_edge_button.setOnAction { add_edge(event = ActionEvent()) }
+     del_edge_button.setOnAction {del_edge(event = ActionEvent())  }
+     add_vert_button.setOnAction {add_vert(event = ActionEvent())  }
+     del_vert_button.setOnAction { del_vert(event = ActionEvent()) }
+    })
+
+
+   }
   }
 
  }
  @FXML
- private fun step_forward() {
-  if(model.createAllComponents()){
+ private fun step_forward(event: ActionEvent)  {
+  off_parametrs()
+  del_edge_button.onAction = null
+  add_vert_button.onAction = null
+  add_edge_button.onAction = null
+  del_vert_button.onAction = null
+  for(i in vxcells){
+   i.enableDrag()
+  }
+  if(model.getAllComponents().isEmpty()){
+   create_components = model.createAllComponents()
+  }
+  if(create_components){
    model.BoruvkaMST(0)
+   if(model.end_flag == true) {                 //алгоритм завершился
+    step_forward_button.onAction = null
+    model.end_flag = false
+    result_button.text = "Заново"
+    result_button.setOnAction(EventHandler<ActionEvent?> {
+     result_button.text = "Результат"
+     set_default()
+     step_forward_button.setOnAction { step_forward(event = ActionEvent())}
+     add_edge_button.setOnAction { add_edge(event = ActionEvent()) }
+     del_edge_button.setOnAction {del_edge(event = ActionEvent())  }
+     add_vert_button.setOnAction {add_vert(event = ActionEvent())  }
+     del_vert_button.setOnAction { del_vert(event = ActionEvent()) }
+     })
+
+
+   }
   }
  }
-}
+ }

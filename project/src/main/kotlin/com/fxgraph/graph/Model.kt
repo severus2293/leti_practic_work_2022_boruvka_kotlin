@@ -54,7 +54,6 @@ class Model {
             col = Color.color(r,g,b)
         }
         dif_colors.add(col)
-      //  var col: Color = Color(r,g,b)
 
         return  col
     }
@@ -76,12 +75,6 @@ class Model {
     fun getAllEdges(): MutableList<Edge> { // получить список всех рёбер
         return allEdges;
     }
-    // вызывать только при нажатии мышки и нажатой клавише add
-   // fun addCell(id: String) { // добавить вершину
-   //     val circlecell: CircleCell = CircleCell(id)
-  //      addCell(circlecell)
-
- //   }
     fun addCell(cell: VXCell) {  // приватный метод
 
         addedCells.add(cell.cell) // добавить в список добавленных

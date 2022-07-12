@@ -1,11 +1,5 @@
 package com.fxgraph.vizualization
 
-import javafx.event.EventHandler
-import javafx.scene.Node
-import javafx.scene.control.TextField
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.scene.shape.Line
 import javafx.scene.text.Text

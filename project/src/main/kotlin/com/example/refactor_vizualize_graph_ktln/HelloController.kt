@@ -401,13 +401,9 @@ private fun take_graph(path: String){
      holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
      holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
      edge[0].edgesmap.remove(edge[1])
-     // edge[0].edges.remove(e)
-     // edge[0].edges.remove(second_e)
      edge[0].weightmap.remove(edge[1])
      edge[1].neighbors.remove(edge[0])
      edge[1].edgesmap.remove(edge[0])
-     //edge[1].edges.remove(e)
-     //edge[1].edges.remove(second_e)
      edge[1].weightmap.remove(edge[0])
      cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
       if (e != null) {
@@ -428,11 +424,9 @@ private fun take_graph(path: String){
     e.set_label(Text(weight.toString()))
     vxedges.add(e)
     edge[0].edgesmap[edge[1]] = e
-    // edge[0].edges.add(e)
     edge[0].neighbors.add(edge[1])
     edge[0].weightmap[edge[1]] = weight
     edge[1].edgesmap[edge[0]] = e
-    // edge[1].edges.add(e)
     edge[1].neighbors.add(edge[0])
     edge[1].weightmap[edge[0]] = weight
     holst.children.add(e.get_label())
@@ -479,13 +473,9 @@ private fun take_graph(path: String){
     holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
     holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
     edge[0].edgesmap.remove(edge[1])
-    // edge[0].edges.remove(e)
-    // edge[0].edges.remove(second_e)
     edge[0].weightmap.remove(edge[1])
     edge[1].neighbors.remove(edge[0])
     edge[1].edgesmap.remove(edge[0])
-    //edge[1].edges.remove(e)
-    //edge[1].edges.remove(second_e)
     edge[1].weightmap.remove(edge[0])
     cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
      if (e != null) {
@@ -511,118 +501,7 @@ private fun take_graph(path: String){
   }
   event.consume()
  }
-
- /*@FXML
- private fun add_edge(event: ActionEvent) {
-  //event.consume()
-  if (add_edge_button.style == "-fx-background-color: green") {
-   off_parametrs()
-   add_edge_button.style = "-fx-background-color: #ffa000"
-   for(cell in vxcells){
-    cell.enableDrag()
-   }
-  } else {
-   off_parametrs()
-   add_edge_button.style = "-fx-background-color: green"
-   for(cell in vxcells){
-    cell.disableDrag()
-    cell.onMousePressed = onMousePressed_add_edge
-    cell.onMouseDragged = onMousePressed_add_edge
-   }
-  }
- }
- var onMousePressed_add_edge = EventHandler<MouseEvent> {event ->
-  val node = event.source as VXCell
-  node.stroke = Color.FIREBRICK
-  edge.add(node)
-  if(edge.size == 2){
-   if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
-    val stage = Stage()
-    val loader = FXMLLoader(javaClass.getResource("edge_weight_dialog.fxml"))
-    val root = loader.load<Parent>()
-    val lc: NewFolderController = loader.getController<Any>() as NewFolderController
-    lc.main = this
-    stage.title = "Create edge"
-    stage.scene = Scene(root, 400.0, 200.0)
-    stage.initModality(Modality.APPLICATION_MODAL)
-    stage.showAndWait()
-    println(weight)
-    val e: VXEdge = VXEdge(edge[0],edge[1],weight)
-    edge[0].stroke = Color.GREEN
-    edge[1].stroke = Color.GREEN
-    e.set_label(TextField(weight.toString()))
-    vxedges.add(e)
-    edge[0].edgesmap[edge[1]] = e
-    edge[0].neighbors.add(edge[1])
-    edge[0].weightmap[edge[1]] = weight
-    edge[1].edgesmap[edge[0]] = e
-    edge[1].neighbors.add(edge[0])
-    edge[1].weightmap[edge[0]] = weight
-    holst.children.add(e.get_label())
-    holst.children.add(e)
-    model.addEdge(e.getsource().getcellId(),e.gettarget().getcellId(),weight,e)
-    model.merge()
-   }
-   edge.clear()
-  }
-  event.consume()
- }*/
  /////////////////////////////////////////////////////////////////////////////
-/* @FXML
- private fun del_edge(event: ActionEvent) {
-  event.consume()
-  if (del_edge_button.style == "-fx-background-color: green") {
-   off_parametrs()
-   del_edge_button.style = "-fx-background-color: #ffa000"
-   for (cell in vxcells) {
-    cell.enableDrag()
-   }
-  } else {
-   off_parametrs()
-   del_edge_button.style = "-fx-background-color: green"
-   for(cell in vxcells){
-    cell.disableDrag()
-    cell.onMousePressed = onMousePressed_del_edge
-   }
-  }
- }
-
- var onMousePressed_del_edge = EventHandler<MouseEvent> {event ->
-  val node = event.source as VXCell
-  node.stroke = Color.FIREBRICK
-  edge.add(node)
-  if(edge.size == 2){
-   if(edge[0].getcellId().toInt() != edge[1].getcellId().toInt()){
-    val cur: Int? = edge[0].weightmap[edge[1]]
-    val e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[0],edge[1], it) }
-    val second_e: VXEdge? = edge[0].weightmap[edge[1]]?.let { VXEdge(edge[1],edge[0], it) }
-    edge[0].neighbors.remove(edge[1])
-    holst.children.remove(edge[0].edgesmap[edge[1]])
-    holst.children.remove(edge[1].edgesmap[edge[0]])
-    holst.children.remove(edge[0].edgesmap[edge[1]]?.get_label())
-    holst.children.remove(edge[1].edgesmap[edge[0]]?.get_label())
-    edge[0].edgesmap.remove(edge[1])
-    edge[0].weightmap.remove(edge[1])
-    edge[1].neighbors.remove(edge[0])
-    edge[1].edgesmap.remove(edge[0])
-    edge[1].weightmap.remove(edge[0])
-    cur?.let { Edge(edge[0].cell,edge[1].cell, it) }?.let {
-     if (e != null) {
-      model.del_edge(it,e)
-     }
-    }
-    cur?.let { Edge(edge[1].cell,edge[0].cell, it) }?.let {
-     if (second_e != null) {
-      model.del_edge(it,second_e)
-     }
-    }
-
-   }
-   edge.clear()
-  }
-  event.consume()
- }*/
-
  @FXML
  private fun result(event: ActionEvent) {
   off_parametrs()
@@ -654,6 +533,12 @@ private fun take_graph(path: String){
 
 
    }
+  }
+  else{
+   add_edge_button.setOnAction { add_edge(event = ActionEvent()) }
+   del_edge_button.setOnAction {del_edge(event = ActionEvent())  }
+   add_vert_button.setOnAction {add_vert(event = ActionEvent())  }
+   del_vert_button.setOnAction { del_vert(event = ActionEvent()) }
   }
 
  }
@@ -688,6 +573,12 @@ private fun take_graph(path: String){
 
 
    }
+  }
+  else{
+   add_edge_button.setOnAction { add_edge(event = ActionEvent()) }
+   del_edge_button.setOnAction {del_edge(event = ActionEvent())  }
+   add_vert_button.setOnAction {add_vert(event = ActionEvent())  }
+   del_vert_button.setOnAction { del_vert(event = ActionEvent()) }
   }
  }
  }

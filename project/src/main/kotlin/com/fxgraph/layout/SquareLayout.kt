@@ -13,7 +13,6 @@ class SquareLayout {  // 6x6
         height_val = height
         step_width = width / separ - 15
         step_height = height / separ + 15
-        //x = step_height
         y = step_height
     }
     fun execute(): MutableList<Double> {
